@@ -4,6 +4,7 @@ from typing import Optional
 from database import engine, SessionLocal
 from sqlalchemy.orm import Session
 from pydantic import BaseModel, Field
+from auth import get_current_user, get_user_exception
 
 app = FastAPI()
 
@@ -34,6 +35,14 @@ class Todo(BaseModel):
 @app.get("/")
 async def read_all(db: Session = Depends(get_db)):
     return db.query(models.Todos).all()
+
+
+@app.get("/todos/user")
+async def read_all_by_user(user: dict = Depends(get_current_user), db: Session = Depends(get_db)):
+    if user is None:
+        raise get_user_exception()
+    return db.query(models.Todos).filter(models.Todos.owner_id == user.get("id"))
+
 
 # obtener todo por id
 @app.get("/todo/{todo_id}")

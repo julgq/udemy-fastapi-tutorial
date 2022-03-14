@@ -102,7 +102,6 @@ def token_exception():
     return token_exception_response
 
 
-
 @app.post("/create/user")
 async def create_new_user(create_user: CreateUser, db: Session = Depends(get_db)):
     create_user_model = models.Users()
