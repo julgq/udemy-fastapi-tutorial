@@ -93,7 +93,6 @@ async def get_current_user(request: Request):
         token = request.cookies.get("access_token")
         if token is None:
             return None
-
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         username: str = payload.get("sub")
         user_id: int = payload.get("id")
@@ -101,8 +100,7 @@ async def get_current_user(request: Request):
             logout(request)
         return {"username": username, "id": user_id}
     except JWTError:
-        raise get_user_exception()
-
+        raise HTTPException(status_code=404, detail="Not Found")
 
 # login and return the token.
 @router.post("/token")
